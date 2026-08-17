@@ -70,6 +70,39 @@ Strong negative correlation between delivery time and customer satisfaction:
 Review scores drop by more than 2 points between the fastest and slowest 
 delivery buckets. ~4.4% of delivered orders took over 30 days.
 
+### Geographic Revenue & Delivery Performance (`sql/04_geographic_analysis.sql`)
+Revenue is heavily concentrated in São Paulo (SP), which accounts for ~40% of 
+total orders and revenue (40,265 orders, $5.77M) — a notable concentration risk. 
+Delivery time and customer satisfaction both correlate with distance from SP, 
+the apparent fulfillment hub:
+
+| State | Orders | Avg Delivery (days) | Avg Review Score |
+|---|---|---|---|
+| SP | 40,265 | 8.7 | 4.25 |
+| RJ | 12,211 | 15.3 | 3.97 |
+| MG | 11,285 | 11.9 | 4.19 |
+| BA | 3,229 | 19.1 | 3.93 |
+| RR (slowest) | 41 | 29.3 | 3.90 |
+
+Remote northern/northeastern states see delivery times 2-3x longer than SP, 
+with generally lower satisfaction. This suggests delivery delays are 
+structurally tied to distance from the fulfillment hub, rather than a uniform 
+logistics problem — pointing toward regional fulfillment or better delivery-time 
+expectations at checkout for distant states, rather than a blanket fix.
+
+### Customer Retention (`sql/05_rfm_segmentation.sql`)
+Only ~3% of customers (2,801 of 93,357) made a repeat purchase, though repeat 
+customers spend nearly 2x more on average ($308.59 vs. $160.76). Despite this 
+higher per-customer value, repeat customers contribute only ~5.6% of total 
+revenue ($864K of ~$15.4M) due to their small numbers — the business is heavily 
+acquisition-dependent rather than retention-driven.
+
+This raises a hypothesis worth testing further: given the strong link between 
+delivery time and review score (above), poor post-purchase experience — 
+particularly delivery delays — may be suppressing repeat purchase behavior. 
+Improving delivery reliability could plausibly improve retention, not just 
+one-time satisfaction.
+
 *(More findings added as analysis progresses...)*
 
 ## 5. Share
