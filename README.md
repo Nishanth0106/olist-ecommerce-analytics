@@ -39,6 +39,9 @@ Data quality checks performed before analysis (see `sql/01_data_quality_checks.s
 - **CSV parsing issue found and fixed:** `order_reviews` failed to load due to 
   unescaped quote characters within free-text review comments. Fixed by enabling 
   "quoted newlines" in BigQuery's CSV import settings.
+- **`category_translation` table initially loaded with the header row misread 
+  as data**, due to BigQuery auto-detect misinterpreting the file structure. 
+  Fixed by skipping the header row on import and explicitly renaming columns via SQL.
 - **2.98% of orders (2,965) have no recorded delivery date** — cross-referenced 
   against order status and confirmed these are non-delivered orders (canceled, 
   unavailable, processing, etc.), not a data defect.
@@ -48,13 +51,27 @@ Data quality checks performed before analysis (see `sql/01_data_quality_checks.s
 
 ## 4. Analyze
 
-### Revenue Trends (`sql/02_revenue_trends.sql`)
+### Revenue Trends & Top Categories (`sql/02_revenue_trends.sql`, `sql/06_top_categories.sql`)
 Revenue grew consistently from late 2016 through 2018, driven primarily by 
 **order volume growth rather than increased average order value** 
 (AOV stable in the $150-175 range throughout). November 2017 shows a clear 
 seasonal spike (7,289 orders, $1.15M) consistent with Black Friday. 
 Note: Sept-Oct 2018 reflects a data export cutoff, not a real sales decline — 
 these final months are excluded from trend conclusions.
+
+Revenue is diversified across a healthy mix of category types:
+
+| Category | Orders | Total Revenue | Avg Item Price |
+|---|---|---|---|
+| Health & Beauty | 8,647 | $1.23M | $130.28 |
+| Watches & Gifts | 5,495 | $1.17M | $199.04 |
+| Bed, Bath & Table | 9,272 | $1.02M | $93.44 |
+| Sports & Leisure | 7,530 | $954.9K | $113.25 |
+| Computers Accessories | 6,530 | $888.7K | $116.26 |
+
+The top categories span both high-value/lower-volume items (Watches & Gifts) 
+and high-volume/lower-value staples (Bed, Bath & Table) — indicating a 
+diversified revenue base rather than dependence on a single category type.
 
 ### Delivery Time vs. Review Score (`sql/03_delivery_vs_reviews.sql`)
 Strong negative correlation between delivery time and customer satisfaction:
@@ -102,8 +119,6 @@ delivery time and review score (above), poor post-purchase experience —
 particularly delivery delays — may be suppressing repeat purchase behavior. 
 Improving delivery reliability could plausibly improve retention, not just 
 one-time satisfaction.
-
-*(More findings added as analysis progresses...)*
 
 ## 5. Share
 
